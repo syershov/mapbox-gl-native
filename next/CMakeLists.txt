@@ -27,22 +27,19 @@ option(MBGL_WITH_CORE_ONLY "Build only the core bits, no platform code" OFF)
 option(MBGL_WITH_QT "Build Mapbox GL Qt bindings" OFF)
 option(MBGL_WITH_SANITIZER "Use [address|thread|memory|undefined] here" OFF)
 
+# Compiler/linker configuration
+set(
+    CMAKE_CXX_FLAGS
+    "${CMAKE_CXX_FLAGS} -fno-rtti -Werror -Wall -Wextra -Wno-error=unknown-pragmas -Wno-error=deprecated-declarations -Wno-error=unused-parameter"
+)
+
 set(CMAKE_CXX_FLAGS_DEBUGCOVERAGE "${CMAKE_CXX_FLAGS_DEBUG} --coverage")
 set(CMAKE_C_FLAGS_DEBUGCOVERAGE "${CMAKE_CXX_FLAGS_DEBUG} --coverage")
 
 set(CMAKE_CXX_FLAGS_SANITIZE "-DSANITIZE -g -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize=${MBGL_WITH_SANITIZER}")
 set(CMAKE_C_FLAGS_SANITIZE "-DSANITIZE -g -O1 -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize=${MBGL_WITH_SANITIZER}")
 
-if(MBGL_WITH_QT)
-    find_package(Qt5Core REQUIRED)
-    set(CMAKE_AUTOMOC ON)
-    set(CMAKE_AUTORCC ON)
-endif()
-
-# Avoid warnings when setting visibility
 cmake_policy(SET CMP0063 NEW)
-
-# Compiler/linker configuration
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -55,6 +52,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_MINSIZEREL ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+
+if(MBGL_WITH_QT)
+    find_package(Qt5Core REQUIRED)
+    set(CMAKE_AUTOMOC ON)
+    set(CMAKE_AUTORCC ON)
+endif()
 
 add_library(
     mbgl-core STATIC
