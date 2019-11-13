@@ -50,7 +50,12 @@ public:
     CameraOptions getCameraOptions(optional<EdgeInsets>) const;
 
     EdgeInsets getEdgeInsets() const {return edgeInsets;}
-    void setEdgeInsets(const EdgeInsets& val) {edgeInsets = val;}
+    void setEdgeInsets(const EdgeInsets& val) {
+        if (edgeInsets != val) {
+            edgeInsets = val;
+            matrixNeedsUpdate = true;
+        }
+    }
     // Position
     LatLng getLatLng(LatLng::WrapMode = LatLng::Unwrapped) const;
     double pixel_x() const;
@@ -63,7 +68,12 @@ public:
 
     // Scale
     double getScale() const { return scale; }
-    void setScale(const double val ) {scale = val;}
+    void setScale( double val ) {
+        if (scale != val) {
+            scale = val;
+            matrixNeedsUpdate = true;
+        }
+    }
 
     // Bounds
     void setLatLngBounds(LatLngBounds);
@@ -75,16 +85,21 @@ public:
 
     // Rotation
     float getBearing() const;
-    void setBearing(float val) {bearing = val;}
+    void setBearing(float val) {
+        if (bearing != val) {
+            bearing = val;
+            matrixNeedsUpdate = true;
+        }
+    }
     float getFieldOfView() const;
     float getCameraToCenterDistance() const;
     float getPitch() const;
     void setPitch(float val) {pitch = val;}
 
     double getXSkew() const {return xSkew;}
-    void setXSkew(double val) {xSkew = val;}
+    void setXSkew(double val) {matrixNeedsUpdate = xSkew != val;xSkew = val;}
     double getYSkew() const {return ySkew;}
-    void setYSkew(double val) {ySkew = val;}
+    void setYSkew(double val) {matrixNeedsUpdate = ySkew != val;ySkew = val;}
     bool getAxonometric() const {return axonometric;}
     void setAxonometric(bool val) {axonometric = val;}
 
@@ -115,7 +130,7 @@ public:
     float getCameraToTileDistance(const UnwrappedTileID&) const;
     float maxPitchScaleFactor() const;
 
-    void constrain() {constrain(scale, x, y);}
+    void constrain() {matrixNeedsUpdate= true; constrain(scale, x, y);}
     void moveLatLng(const LatLng&, const ScreenCoordinate&);
 
     void setLatLngZoom(const LatLng &latLng, double zoom);
@@ -178,6 +193,7 @@ private:
     double Bc = Projection::worldSize(scale) / util::DEGREES_MAX;
     double Cc = Projection::worldSize(scale) / util::M2PI;
 
+    bool matrixNeedsUpdate{true};
     mat4 coordiMatrix;
     mat4 invertedMatrix;
 };

@@ -108,6 +108,9 @@ void TransformState::updateMatrix() {
     if(size.isEmpty()) {
         return;
     }
+    if (!matrixNeedsUpdate) {
+        return;
+    }
    coordiMatrix = coordinatePointMatrix();
    mat4 mat = coordiMatrix;
 
@@ -117,7 +120,10 @@ void TransformState::updateMatrix() {
 }
 
 void TransformState::setSize(const Size& size_) {
-    size = size_;
+    if (size != size_) {
+        matrixNeedsUpdate = true;
+        size = size_;
+    }
 }
 
 #pragma mark - Dimensions
