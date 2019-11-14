@@ -35,6 +35,7 @@ public:
 
     void setError(std::exception_ptr);
     void setData(std::unique_ptr<const GeometryTileData>, bool resetLayers = false);
+    void setData(std::shared_ptr<style::GeoJSONData> data_, CanonicalTileID tileId, bool resetLayers = false);
 
     std::unique_ptr<TileRenderData> createRenderData() override;
     void setLayers(const std::vector<Immutable<style::LayerProperties>>&) override;

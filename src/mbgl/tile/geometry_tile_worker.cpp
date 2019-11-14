@@ -1,6 +1,7 @@
 #include <mbgl/tile/geometry_tile_worker.hpp>
 #include <mbgl/tile/geometry_tile_data.hpp>
 #include <mbgl/tile/geometry_tile.hpp>
+#include <mbgl/tile/geojson_tile_data.hpp>
 #include <mbgl/layermanager/layer_manager.hpp>
 #include <mbgl/layout/layout.hpp>
 #include <mbgl/layout/symbol_layout.hpp>
@@ -9,6 +10,7 @@
 #include <mbgl/renderer/group_by_layout.hpp>
 #include <mbgl/style/filter.hpp>
 #include <mbgl/style/layers/symbol_layer_impl.hpp>
+#include <mbgl/style/sources/geojson_source.hpp>
 #include <mbgl/renderer/layers/render_fill_layer.hpp>
 #include <mbgl/renderer/layers/render_fill_extrusion_layer.hpp>
 #include <mbgl/renderer/layers/render_line_layer.hpp>
@@ -141,6 +143,20 @@ void GeometryTileWorker::setData(std::unique_ptr<const GeometryTileData> data_,
     } catch (...) {
         parent.invoke(&GeometryTile::onError, std::current_exception(), correlationID);
     }
+}
+
+void GeometryTileWorker::setJSONData(std::shared_ptr<style::GeoJSONData> data_, CanonicalTileID tileId, std::set<std::string> availableImages_, bool resetLayers_, uint64_t correlationID_) {
+    std::unique_ptr<const GeometryTileData> tileData;
+    try {
+        correlationID = correlationID_;
+        tileData = std::make_unique<GeoJSONTileData>(data_->getTile(tileId));
+    } catch (...) {
+        parent.invoke(&GeometryTile::onError, std::current_exception(), correlationID);
+    }
+
+    if (!tileData) return;
+
+    setData(std::move(tileData), std::move(availableImages_), resetLayers_, correlationID);
 }
 
 void GeometryTileWorker::setLayers(std::vector<Immutable<LayerProperties>> layers_,

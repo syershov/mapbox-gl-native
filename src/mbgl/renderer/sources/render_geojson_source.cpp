@@ -101,7 +101,7 @@ void RenderGeoJSONSource::update(Immutable<style::Source::Impl> baseImpl_,
         for (const auto& pair : tilePyramid.getTiles()) {
             if (pair.first.canonical.z <= maxZ) {
                 static_cast<GeoJSONTile*>(pair.second.get())
-                    ->updateData(data_->getTile(pair.first.canonical), needsRelayout);
+                    ->updateData(data_, pair.first.canonical, needsRelayout);
             }
         }
     }
@@ -115,7 +115,7 @@ void RenderGeoJSONSource::update(Immutable<style::Source::Impl> baseImpl_,
                        impl().getZoomRange(),
                        optional<LatLngBounds>{},
                        [&, data_] (const OverscaledTileID& tileID) {
-                           return std::make_unique<GeoJSONTile>(tileID, impl().id, parameters, data_->getTile(tileID.canonical));
+                           return std::make_unique<GeoJSONTile>(tileID, impl().id, parameters, data_);
                        });
 }
 

@@ -24,6 +24,7 @@ class Layout;
 
 namespace style {
 class Layer;
+class GeoJSONData;
 } // namespace style
 
 class GeometryTileWorker {
@@ -45,6 +46,7 @@ public:
                  std::set<std::string> availableImages,
                  bool resetLayers,
                  uint64_t correlationID);
+    void setJSONData(std::shared_ptr<style::GeoJSONData> data, CanonicalTileID tileId, std::set<std::string> availableImages, bool resetLayers, uint64_t correlationID);
     void setShowCollisionBoxes(bool showCollisionBoxes_, uint64_t correlationID_);
     
     void onGlyphsAvailable(GlyphMap glyphs);

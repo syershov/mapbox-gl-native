@@ -1,5 +1,4 @@
 #include <mbgl/tile/geojson_tile.hpp>
-#include <mbgl/tile/geojson_tile_data.hpp>
 #include <mbgl/renderer/query.hpp>
 #include <mbgl/renderer/tile_parameters.hpp>
 
@@ -8,13 +7,13 @@ namespace mbgl {
 GeoJSONTile::GeoJSONTile(const OverscaledTileID& overscaledTileID,
                          std::string sourceID_,
                          const TileParameters& parameters,
-                         mapbox::feature::feature_collection<int16_t> features)
+                         std::shared_ptr<style::GeoJSONData> data)
     : GeometryTile(overscaledTileID, sourceID_, parameters) {
-    updateData(std::move(features));
+    updateData(std::move(data), overscaledTileID.canonical);
 }
 
-void GeoJSONTile::updateData(mapbox::feature::feature_collection<int16_t> features, bool resetLayers) {
-    setData(std::make_unique<GeoJSONTileData>(std::move(features)), resetLayers);
+void GeoJSONTile::updateData(std::shared_ptr<style::GeoJSONData> data, CanonicalTileID tileId, bool resetLayers) {
+    setData(std::move(data), tileId, resetLayers);
 }
 
 void GeoJSONTile::querySourceFeatures(

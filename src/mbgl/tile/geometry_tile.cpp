@@ -186,6 +186,16 @@ void GeometryTile::setData(std::unique_ptr<const GeometryTileData> data_, bool r
         &GeometryTileWorker::setData, std::move(data_), imageManager.getAvailableImages(), resetLayers, correlationID);
 }
 
+void GeometryTile::setData(std::shared_ptr<style::GeoJSONData> data_, CanonicalTileID tileId, bool resetLayers) {
+    assert(data_);
+    // Mark the tile as pending again if it was complete before to prevent signaling a complete
+    // state despite pending parse operations.
+    pending = true;
+    ++correlationID;
+    worker.self().invoke(
+        &GeometryTileWorker::setJSONData, std::move(data_), tileId, imageManager.getAvailableImages(), resetLayers, correlationID);
+}
+
 std::unique_ptr<TileRenderData> GeometryTile::createRenderData() {
     return std::make_unique<GeometryTileRenderData>(layoutResult, atlasTextures);
 }
