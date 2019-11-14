@@ -118,6 +118,8 @@ void TransformState::updateMatrix() {
 
 void TransformState::setSize(const Size& size_) {
     size = size_;
+    constrain();
+    updateMatrix();
 }
 
 #pragma mark - Dimensions
@@ -307,12 +309,12 @@ TileCoordinate TransformState::screenCoordinateToTileCoordinate(const ScreenCoor
     }
 
     float targetZ = 0;
-    mat4 mat = coordinatePointMatrix();
+    // mat4 mat = coordinatePointMatrix();
 
-    mat4 inverted;
-    bool err = matrix::invert(inverted, mat);
+    // mat4 inverted;
+    // bool err = matrix::invert(inverted, mat);
 
-    if (err) throw std::runtime_error("failed to invert coordinatePointMatrix");
+    // if (err) throw std::runtime_error("failed to invert coordinatePointMatrix");
 
     double flippedY = size.height - point.y;
 
@@ -419,6 +421,7 @@ void TransformState::setLatLngZoom(const LatLng& latLng, double zoom) {
         0.5 * Cc * std::log((1 + f) / (1 - f)),
     };
     setScalePoint(newScale, point);
+    updateMatrix();
 }
 
 void TransformState::setScalePoint(const double newScale, const ScreenCoordinate &point) {

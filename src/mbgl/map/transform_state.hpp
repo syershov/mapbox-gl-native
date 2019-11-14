@@ -37,11 +37,17 @@ public:
     // North Orientation
     NorthOrientation getNorthOrientation() const;
     double getNorthOrientationAngle() const;
-    void setNorthOrientation(NorthOrientation val) { orientation = val; }
+    void setNorthOrientation(NorthOrientation val) {
+        orientation = val;
+        constrain();
+    }
 
     // Constrain mode
     ConstrainMode getConstrainMode() const;
-    void setConstrainMode(ConstrainMode val) { constrainMode = val; }
+    void setConstrainMode(ConstrainMode val) {
+        constrainMode = val;
+        constrain();
+    }
 
     // Viewport mode
     ViewportMode getViewportMode() const;
@@ -75,16 +81,36 @@ public:
 
     // Rotation
     float getBearing() const;
-    void setBearing(float val) { bearing = val; }
+    void setBearing(float val) {
+        if (bearing != val) {
+            bearing = val;
+            updateMatrix();
+        }
+    }
     float getFieldOfView() const;
     float getCameraToCenterDistance() const;
     float getPitch() const;
-    void setPitch(float val) { pitch = val; }
+    void setPitch(float val) {
+        if (pitch != val) {
+            pitch = val;
+            updateMatrix();
+        }
+    }
 
     double getXSkew() const { return xSkew; }
-    void setXSkew(double val) { xSkew = val; }
+    void setXSkew(double val) {
+        if (xSkew != val) {
+            xSkew = val;
+            updateMatrix();
+        }
+    }
     double getYSkew() const { return ySkew; }
-    void setYSkew(double val) { ySkew = val; }
+    void setYSkew(double val) {
+        if (ySkew != val) {
+            ySkew = val;
+            updateMatrix();
+        }
+    }
     bool getAxonometric() const { return axonometric; }
     void setAxonometric(bool val) { axonometric = val; }
 
@@ -115,14 +141,16 @@ public:
     float getCameraToTileDistance(const UnwrappedTileID&) const;
     float maxPitchScaleFactor() const;
 
-    void constrain() { constrain(scale, x, y); }
+    void constrain() {
+        constrain(scale, x, y);
+        updateMatrix();
+    }
     void moveLatLng(const LatLng&, const ScreenCoordinate&);
 
     void setLatLngZoom(const LatLng& latLng, double zoom);
 
-    void updateMatrix();
-
 private:
+    void updateMatrix();
     bool rotatedNorth() const;
     void constrain(double& scale, double& x, double& y) const;
 
